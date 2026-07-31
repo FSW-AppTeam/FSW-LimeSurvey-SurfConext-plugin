@@ -33,13 +33,13 @@ class AuthOpenIDConnect extends AuthPluginBase
             'type' => 'string',
             'label' => 'Login Form Intro Text',
             'help' => 'The text displayed in the intro text of the login form.',
-            'default' => 'Use the button below to login into LimeSurvey using your OIDC account'
+            'default' => 'Use the button below to login into LimeSurvey using SURFconext'
         ],
         'loginFormOIDCBtnText' => [
             'type' => 'string',
             'label' => 'Login Form Button Text',
             'help' => 'The text displayed in the button text of the login form.',
-            'default' => 'Login using OIDC'
+            'default' => 'Login using SURFconext'
         ],
         'providerURL' => [
             'type' => 'string',
@@ -124,7 +124,7 @@ class AuthOpenIDConnect extends AuthPluginBase
     /**
      * @var string
      */
-    static protected $description = 'OpenID Connect Authentication Plugin for LimeSurvey';
+    static protected $description = 'OpenID Connect Authentication Plugin for LimeSurvey using SURFconext';
 
     /**
      * @var string

@@ -27,11 +27,11 @@ jobs:
         with:
           type: 'zip'
           directory: './src'
-          filename: 'AuthOpenIDConnect.zip'
+          filename: 'SurfConextLimeSurveyPlugin.zip'
           exclusions: '*.git* /*node_modules/* .editorconfig'
 
       - name: Upload Release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: "src/AuthOpenIDConnect.zip"
+          artifacts: "src/SurfConextLimeSurveyPlugin.zip"
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <metadata>
-        <name>AuthOpenIDConnect</name>
+        <name>SurfConext-LimeSurvey-Plugin</name>
         <type>plugin</type>
-        <creationDate>2025-02-27</creationDate>
-        <lastUpdate>2026-07-10</lastUpdate>
+        <creationDate>2026-07-31</creationDate>
+        <lastUpdate>2026-07-31</lastUpdate>
         <author>Gerbrand Sterrenburg-Buijs</author>
         <email>htsappteam@uu.nl</email>
-        <authorUrl>https://github.com/UtrechtUniversity/LimeSurveyOIDCAuth</authorUrl>
-        <version>1.2.2</version>
+        <authorUrl>https://github.com/UtrechtUniversity/SurfConext-LimeSurvey-Plugin</authorUrl>
+        <version>1.0.0</version>
         <license>GNU General Public License version 3</license>
-        <description><![CDATA[Core: OIDC Authentication]]></description>
+        <description><![CDATA[Core: OIDC Authentication with SURFconext]]></description>
     </metadata>
 
     <compatibility>
