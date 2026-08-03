@@ -113,6 +113,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                 'readOnly' => true,
             ]
         ],
+        'defaultRoleFilterOnOrganization' => [
+            'type' => 'string',
+            'label' => 'Default Role Filter',
+            'help' => 'Name of the organization the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
+            'default' => ''
+        ],
         'defaultRole' => [
             'type' => 'string',
             'label' => 'Default Role',
@@ -157,14 +163,14 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     public function getGlobalBasePermissions(): void
     {
         $this->getEvent()->append('globalBasePermissions', array(
-            'auth_oidc' => array(
+            'auth_surf_conext' => array(
                 'create' => false,
                 'update' => false,
                 'delete' => false,
                 'import' => false,
                 'export' => false,
-                'title' => gT("Use OIDC authentication"),
-                'description' => gT("Use OIDC authentication"),
+                'title' => gT("Use SURFConext authentication"),
+                'description' => gT("Use SURFConext authentication"),
                 'img' => 'usergroup'
             ),
         ));
@@ -292,13 +298,18 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
 
                     if ($user->save()) {
                         // set default permissions
-                        Permission::model()->setGlobalPermission($user->uid, 'auth_oidc');
-                        
-                        // find the permissionTemplate aka Role
-                        $role = Permissiontemplates::model()->findByAttributes(['name' => $this->get('defaultRole', null, null, false)]);
+                        Permission::model()->setGlobalPermission($user->uid, 'auth_surf_conext');
 
-                        if ($role) {
-                            $role->applyToUser($user->uid);
+                        // get the user's organization from the OIDC response
+                        $organization = $oidc->requestUserInfo('schac_home_organization') ?? "";
+
+                        if ($this->get('defaultRoleFilterOnOrganization', null, null, false) === $organization) {
+                            // find the permissionTemplate aka Role
+                            $role = Permissiontemplates::model()->findByAttributes(['name' => $this->get('defaultRole', null, null, false)]);
+
+                            if ($role) {
+                                $role->applyToUser($user->uid);
+                            }
                         }
                     } else {
                         $this->setAuthFailure(self::ERROR_USERNAME_INVALID, gT('Unable to create user'), $authEvent);
