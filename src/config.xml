@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <metadata>
-        <name>SurfConext-LimeSurvey-Plugin</name>
+        <name>SurfConextLimeSurveyAuth</name>
         <type>plugin</type>
         <creationDate>2026-07-31</creationDate>
         <lastUpdate>2026-07-31</lastUpdate>

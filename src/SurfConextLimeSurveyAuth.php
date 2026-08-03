@@ -8,7 +8,7 @@ use Jumbojett\OpenIDConnectClientException;
 /**
  * AuthOpenIDConnect
  */
-class AuthOpenIDConnect extends AuthPluginBase
+class SurfConextLimeSurveyAuth extends AuthPluginBase
 {
     /**
      * @var string
