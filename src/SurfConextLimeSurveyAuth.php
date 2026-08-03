@@ -13,12 +13,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var string
      */
-    protected $storage = 'DbStorage';
+    protected string $storage = 'DbStorage';
 
     /**
      * @var array
      */
-    protected $settings = [
+    protected array $settings = [
         'info' => [
             'type' => 'info',
             'content' => '<h1>OpenID Connect</h1><p>Please provide the following settings.</br>If necessary settings are missing, the default authdb login will be shown.</p>'
@@ -124,12 +124,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var string
      */
-    static protected $description = 'OpenID Connect Authentication Plugin for LimeSurvey using SURFconext';
+    static protected string $description = 'OpenID Connect Authentication Plugin for LimeSurvey using SURFconext';
 
     /**
      * @var string
      */
-    static protected $name = 'SurfConextLimeSurveyAuth';
+    static protected string $name = 'SurfConextLimeSurveyAuth';
 
     /**
      * @return void
@@ -155,7 +155,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
      *
      * Add AuthLDAP Permission to global Permission
      */
-    public function getGlobalBasePermissions()
+    public function getGlobalBasePermissions(): void
     {
         $this->getEvent()->append('globalBasePermissions', array(
             'auth_oidc' => array(
@@ -209,7 +209,8 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
      * @return false|mixed|null
      * @throws Exception
      */
-    private function getAttribute($oidc, $name) {
+    private function getAttribute($oidc, $name): mixed
+    {
         $attributeName = $this->get($name, null, null, false);
 
         if (!$attributeName) {
@@ -228,13 +229,13 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @return void
      */
-    public function beforeActivate()
+    public function beforeActivate(): void
     {
-        $baseURL = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}";
-        $basePath = preg_split("/\/pluginmanager/", $_SERVER['REQUEST_URI']);
+        $baseURL = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+        $basePath = preg_split("/\/pluginmanager/", $_SERVER['REQUEST_URI'] ?? '');
 
-        $this->set('redirectURL', $baseURL . $basePath[0] . "/authentication/sa/login?oidc=true");
-        $this->set('postLogoutCallBackURL', $baseURL . $basePath[0] . "/authentication/sa/logout");
+        $this->set('redirectURL', $baseURL . ($basePath[0] ?? '') . "/authentication/sa/login?oidc=true");
+        $this->set('postLogoutCallBackURL', $baseURL . ($basePath[0] ?? '') . "/authentication/sa/logout");
     }
 
     /**
@@ -258,7 +259,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     public function beforeLogin(): void
     {
         if(!$this->get('forceOIDCLogin', null, null, false)) {
-            if(!($_GET['oidc'] === 'true')) {
+            if(!(isset($_GET['oidc']) && $_GET['oidc'] === 'true')) {
                 return;
             }
         }
@@ -348,7 +349,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
      */
     public function beforeLogout(): void
     {
-        $oidcIDToken = $_SESSION['oidcIDToken'];
+        $oidcIDToken = $_SESSION['oidcIDToken'] ?? null;
 
         if ($oidcIDToken) {
             unset($_SESSION["oidcIDToken"]);
