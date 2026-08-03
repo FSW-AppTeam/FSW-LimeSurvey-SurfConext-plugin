@@ -1,7 +1,7 @@
 {
-  "name": "janmenzel/auth-openid-connect",
+  "name": "utrechtuniversity/surf-conext-lime-survey-auth",
   "description": "OpenID Connect Authentication Plugin for LimeSurvey for SURFconext",
   "require": {
-    "jumbojett/openid-connect-php": "^0.9.7"
+    "jumbojett/openid-connect-php": "^0.9.10"
   }
 }
