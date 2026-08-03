@@ -129,7 +129,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var string
      */
-    static protected $name = 'AuthOpenIDConnect';
+    static protected $name = 'SurfConextLimeSurveyAuth';
 
     /**
      * @return void
@@ -240,7 +240,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * newLoginForm
      */
-    public function newLoginForm()
+    public function newLoginForm(): void
     {
         $authTypeBase = $this->get('authtype_base', null, null, 'Authdb');
 
@@ -328,7 +328,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     {
         $identity = $this->getEvent()->get('identity');
 
-        if ($identity->plugin != 'AuthOpenIDConnect') {
+        if ($identity->plugin != 'SurfConextLimeSurveyAuth') {
             return;
         }
 
@@ -372,7 +372,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     public static function getAuthMethodName(): string
     {
         // Using string literal here so it can be picked by translation bot
-        return gT('OpenID Connect Authentication');
+        return gT('SURFConext Connect Authentication');
     }
 }
 
