@@ -142,7 +142,6 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
         $this->subscribe('newUserSession');
 
         // logout related
-        $this->subscribe('beforeLogout');
         $this->subscribe('afterLogout');
 
         if (!$this->get('forceOIDCLogin', null, null, false)) {
@@ -307,9 +306,6 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                     }
                 }
 
-                // store IdToken, used to sign out later on
-                $_SESSION['oidcIDToken'] = $oidc->getIdToken();
-
                 $this->setUsername($user->users_name);
                 $this->setAuthPlugin();
 
@@ -340,22 +336,6 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
             $this->setAuthFailure(self::ERROR_UNKNOWN_IDENTITY, gT('User not found.'));
         } else {
             $this->setAuthSuccess($user);
-        }
-    }
-
-    /**
-     * @return void
-     * @throws OpenIDConnectClientException
-     */
-    public function beforeLogout(): void
-    {
-        $oidcIDToken = $_SESSION['oidcIDToken'] ?? null;
-
-        if ($oidcIDToken) {
-            unset($_SESSION["oidcIDToken"]);
-
-            $oidc = $this->getOIDCClient();
-            $oidc->signOut($oidcIDToken, $this->get('postLogoutCallBackURL', null, null, false));
         }
     }
 
