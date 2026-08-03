@@ -6,7 +6,7 @@ use Jumbojett\OpenIDConnectClient;
 use Jumbojett\OpenIDConnectClientException;
 
 /**
- * AuthOpenIDConnect
+ * SurfConextLimeSurveyAuth
  */
 class SurfConextLimeSurveyAuth extends AuthPluginBase
 {
