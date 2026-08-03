@@ -18,7 +18,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var array
      */
-    protected array $settings = [
+    protected $settings = [
         'info' => [
             'type' => 'info',
             'content' => '<h1>OpenID Connect</h1><p>Please provide the following settings.</br>If necessary settings are missing, the default authdb login will be shown.</p>'
@@ -124,12 +124,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var string
      */
-    static protected string $description = 'OpenID Connect Authentication Plugin for LimeSurvey using SURFconext';
+    static protected $description = 'OpenID Connect Authentication Plugin for LimeSurvey using SURFconext';
 
     /**
      * @var string
      */
-    static protected string $name = 'SurfConextLimeSurveyAuth';
+    static protected $name = 'SurfConextLimeSurveyAuth';
 
     /**
      * @return void
