@@ -13,7 +13,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     /**
      * @var string
      */
-    protected string $storage = 'DbStorage';
+    protected $storage = 'DbStorage';
 
     /**
      * @var array
