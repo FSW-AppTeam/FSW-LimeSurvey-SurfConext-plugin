@@ -311,6 +311,10 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                                 $role->applyToUser($user->uid);
                             }
                         }
+
+                        // send an email with with a welcome message
+                        $passwordManagement = new \LimeSurvey\Models\Services\PasswordManagement($user);
+                        $passwordManagement->sendPasswordLinkViaEmail(\LimeSurvey\Models\Services\PasswordManagement::EMAIL_TYPE_REGISTRATION);
                     } else {
                         $this->setAuthFailure(self::ERROR_USERNAME_INVALID, gT('Unable to create user'), $authEvent);
                         return;
