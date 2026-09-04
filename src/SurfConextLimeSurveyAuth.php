@@ -301,9 +301,13 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                         Permission::model()->setGlobalPermission($user->uid, 'auth_surf_conext');
 
                         // get the user's organization from the OIDC response
-                        $organization = $oidc->requestUserInfo('schac_home_organization') ?? "";
+                        $department = $oidc->requestUserInfo('ou') ?? "";
 
-                        if ($this->get('defaultRoleFilterOnOrganization', null, null, false) === $organization) {
+                        if (is_array($department)) {
+                            $department = array_keys($department)[0] ?? "";
+                        }
+
+                        if ($this->get('defaultRoleFilterOnOrganization', null, null, false) === $department) {
                             // find the permissionTemplate aka Role
                             $role = Permissiontemplates::model()->findByAttributes(['name' => $this->get('defaultRole', null, null, false)]);
 
