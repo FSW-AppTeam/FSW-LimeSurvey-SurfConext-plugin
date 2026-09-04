@@ -119,6 +119,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
             'help' => 'Name of the organization the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
             'default' => ''
         ],
+        'defaultRoleFilterOnDepartment' => [
+            'type' => 'string',
+            'label' => 'Default Role Filter',
+            'help' => 'Name of the department the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
+            'default' => ''
+        ],
         'defaultRole' => [
             'type' => 'string',
             'label' => 'Default Role',
@@ -301,9 +307,27 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                         Permission::model()->setGlobalPermission($user->uid, 'auth_surf_conext');
 
                         // get the user's organization from the OIDC response
+                        $department = $oidc->requestUserInfo('ou') ?? "";
                         $organization = $oidc->requestUserInfo('schac_home_organization') ?? "";
 
-                        if ($this->get('defaultRoleFilterOnOrganization', null, null, false) === $organization) {
+                        $allowedOrganization = $this->get('defaultRoleFilterOnOrganization', null, null, false);
+                        $allowedDepartment = $this->get('defaultRoleFilterOnDepartment', null, null, false);
+
+                        $userIsAllowedRole = false;
+
+                        if($allowedOrganization === $organization) {
+                            if (is_array($department)) {
+                                if (in_array($allowedDepartment, $department)) {
+                                    $userIsAllowedRole = true;
+                                }
+                            } elseif (is_string($department)) {
+                                if ($department === $allowedDepartment) {
+                                    $userIsAllowedRole = true;
+                                }
+                            }
+                        }
+
+                        if ($userIsAllowedRole) {
                             // find the permissionTemplate aka Role
                             $role = Permissiontemplates::model()->findByAttributes(['name' => $this->get('defaultRole', null, null, false)]);
 
@@ -311,6 +335,10 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                                 $role->applyToUser($user->uid);
                             }
                         }
+
+                        // send an email with a welcome message
+                        $passwordManagement = new \LimeSurvey\Models\Services\PasswordManagement($user);
+                        $passwordManagement->sendPasswordLinkViaEmail(\LimeSurvey\Models\Services\PasswordManagement::EMAIL_TYPE_REGISTRATION);
                     } else {
                         $this->setAuthFailure(self::ERROR_USERNAME_INVALID, gT('Unable to create user'), $authEvent);
                         return;
