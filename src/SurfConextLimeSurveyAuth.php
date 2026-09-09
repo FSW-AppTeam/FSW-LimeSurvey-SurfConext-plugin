@@ -346,6 +346,9 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                     }
                 }
 
+                // store IdToken, used to sign out later on
+                $_SESSION['oidcIDToken'] = $oidc->getIdToken();
+
                 $this->setUsername($user->users_name);
                 $this->setAuthPlugin();
 
