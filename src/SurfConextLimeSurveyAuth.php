@@ -155,6 +155,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
 
         // logout related
         $this->subscribe('afterLogout');
+        $this->subscribe('beforeLogout');
 
         if (!$this->get('forceOIDCLogin', null, null, false)) {
             $this->subscribe('newLoginForm');
