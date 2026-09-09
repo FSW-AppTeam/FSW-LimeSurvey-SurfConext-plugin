@@ -380,6 +380,22 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
 
     /**
      * @return void
+     * @throws OpenIDConnectClientException
+     */
+    public function beforeLogout(): void
+    {
+        $oidcIDToken = $_SESSION['oidcIDToken'];
+
+        if ($oidcIDToken) {
+            unset($_SESSION["oidcIDToken"]);
+
+            $oidc = $this->getOIDCClient();
+            $oidc->signOut($oidcIDToken, $this->get('postLogoutCallBackURL', null, null, false));
+        }
+    }
+
+    /**
+     * @return void
      */
     public function afterLogout(): void
     {
