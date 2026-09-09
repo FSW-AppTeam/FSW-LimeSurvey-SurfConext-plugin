@@ -155,6 +155,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
 
         // logout related
         $this->subscribe('afterLogout');
+        $this->subscribe('beforeLogout');
 
         if (!$this->get('forceOIDCLogin', null, null, false)) {
             $this->subscribe('newLoginForm');
@@ -375,6 +376,26 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
             $this->setAuthFailure(self::ERROR_UNKNOWN_IDENTITY, gT('User not found.'));
         } else {
             $this->setAuthSuccess($user);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws OpenIDConnectClientException
+     */
+    public function beforeLogout(): void
+    {
+        $oidcIDToken = $_SESSION['oidcIDToken'] ?? null;
+
+        if (!empty($oidcIDToken)) {
+            unset($_SESSION['oidcIDToken']);
+
+            $oidc = $this->getOIDCClient();
+            if ($oidc === null) {
+                return;
+            }
+
+            $oidc->signOut($oidcIDToken, $this->get('postLogoutCallBackURL', null, null, false));
         }
     }
 
