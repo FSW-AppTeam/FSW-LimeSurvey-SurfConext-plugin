@@ -125,6 +125,12 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
             'help' => 'Name of the department the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
             'default' => ''
         ],
+        'defaultAttributeGroup' => [
+            'type' => 'string',
+            'label' => 'Group attribute',
+            'help' => 'Name of attribute from Surfconext to add User to on login',
+            'default' => 'ou'
+        ],
         'defaultRole' => [
             'type' => 'string',
             'label' => 'Default Role',
@@ -239,6 +245,45 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
     }
 
     /**
+     * Ensures every given group name exists (creating it when necessary)
+     * and makes sure the user is a member of each of them.
+     *
+     * @param User $user
+     * @param string|array $group One group name, or an array of group names
+     * @return void
+     */
+    private function addUserToGroups(User $user, $group): void
+    {
+        $groups = is_array($group) ? $group : [$group];
+
+        foreach ($groups as $groupName) {
+            $groupName = trim((string) $groupName);
+
+            if ($groupName === '') {
+                continue;
+            }
+
+            // Group name is limited to 20 characters (see UserGroup model rules).
+            $groupName = substr($groupName, 0, 20);
+
+            $userGroup = UserGroup::model()->findByAttributes(['name' => $groupName]);
+
+            if (empty($userGroup)) {
+                $userGroup = new UserGroup();
+                $userGroup->name = $groupName;
+                $userGroup->description = $groupName;
+                // Group is owned by the admin.
+                $userGroup->owner_id = 1;
+                $userGroup->save();
+            }
+
+            if (!empty($userGroup) && !$userGroup->hasUser($user->uid)) {
+                $userGroup->addUser($user->uid);
+            }
+        }
+    }
+
+    /**
      * @return void
      */
     public function beforeActivate(): void
@@ -291,6 +336,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                 $givenName = $this->getAttribute($oidc, 'attributeGivenName');
                 $familyName = $this->getAttribute($oidc, 'attributeFamilyName');
                 $email = $this->getAttribute($oidc, 'attributeEmail');
+                $groups = $this->getAttribute($oidc, 'defaultAttributeGroup', true);
 
                 $user = $this->api->getUserByName($username);
 
@@ -348,6 +394,10 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
 
                 // store IdToken, used to sign out later on
                 $_SESSION['oidcIDToken'] = $oidc->getIdToken();
+
+                if (!empty($groups)) {
+                    $this->addUserToGroups($user, $groups);
+                }
 
                 $this->setUsername($user->users_name);
                 $this->setAuthPlugin();
