@@ -115,13 +115,13 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
         ],
         'defaultRoleFilterOnOrganization' => [
             'type' => 'string',
-            'label' => 'Default Role Filter',
+            'label' => 'Default Organisation Filter (schac_home_organization in Surfconext)',
             'help' => 'Name of the organization the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
             'default' => ''
         ],
         'defaultRoleFilterOnDepartment' => [
             'type' => 'string',
-            'label' => 'Default Role Filter',
+            'label' => 'Default Faculty Filter (ou in  Surfconext)',
             'help' => 'Name of the department the user has to belong to in order to be assigned the default role. If empty, the default role is assigned to all users. Users from other organizations don\'t get the a default role.',
             'default' => ''
         ],
@@ -227,7 +227,7 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
      * @return false|mixed|null
      * @throws Exception
      */
-    private function getAttribute($oidc, $name): mixed
+    private function getAttribute($oidc, $name, $array = false): mixed
     {
         $attributeName = $this->get($name, null, null, false);
 
@@ -236,6 +236,10 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
         }
 
         $attribute = $oidc->requestUserInfo($attributeName);
+
+        if ($array) {
+            return $attribute;
+        }
 
         if (is_array($attribute)) {
             return current($attribute);
@@ -363,14 +367,15 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                         $userIsAllowedRole = false;
 
                         if($allowedOrganization === $organization) {
-                            if (is_array($department)) {
-                                if (in_array($allowedDepartment, $department)) {
-                                    $userIsAllowedRole = true;
-                                }
-                            } elseif (is_string($department)) {
-                                if ($department === $allowedDepartment) {
-                                    $userIsAllowedRole = true;
-                                }
+                            if(is_null($department) | empty($department)) {
+                                // Whe allow everybody from the organisation.
+                                $userIsAllowedRole = true;
+                            }
+                            if (is_array($department) && in_array($allowedDepartment, $department)) {
+                                $userIsAllowedRole = true;
+                            }
+                            if (is_string($department) && $department === $allowedDepartment) {
+                                $userIsAllowedRole = true;
                             }
                         }
 
