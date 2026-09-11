@@ -266,6 +266,9 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
             if ($groupName === '') {
                 continue;
             }
+            // Plak alle hoofdletters en letters voorafgegaan aan een spatie aan elkaar
+            preg_match_all('/\p{Lu}|(?<=\s)\p{L}/u', $groupName, $matches);
+            $groupName = mb_strtoupper(implode('', $matches[0]), 'UTF-8');
 
             // Group name is limited to 20 characters (see UserGroup model rules).
             $groupName = substr($groupName, 0, 20);
