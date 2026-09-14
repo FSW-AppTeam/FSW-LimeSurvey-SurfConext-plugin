@@ -329,6 +329,9 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
         }
 
         $oidc = $this->getOIDCClient();
+        $oidc->addAuthParam([
+            'prompt' => 'login',
+        ]);
 
         if (is_null($oidc) || isset($_REQUEST['error'])) {
             return;
@@ -456,7 +459,13 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                 return;
             }
 
-            $oidc->signOut($oidcIDToken, $this->get('postLogoutCallBackURL', null, null, false));
+            try {
+                $oidc->signOut($oidcIDToken, $this->get('postLogoutCallBackURL', null, null, false));
+            } catch (OpenIDConnectClientException $e) {
+                $_SESSION = [];
+                Yii::app()->user->logout(true);
+                return;
+            }
         }
     }
 
