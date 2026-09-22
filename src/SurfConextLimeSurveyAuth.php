@@ -373,8 +373,8 @@ class SurfConextLimeSurveyAuth extends AuthPluginBase
                         $userIsAllowedRole = false;
 
                         if($allowedOrganization === $organization) {
-                            if(is_null($department) | empty($department)) {
-                                // Whe allow everybody from the organisation.
+                            if(is_null($allowedDepartment) | empty($allowedDepartment)) {
+                                // Whe allow everybody from the allowedOrganization.
                                 $userIsAllowedRole = true;
                             }
                             if (is_array($department) && in_array($allowedDepartment, $department)) {
